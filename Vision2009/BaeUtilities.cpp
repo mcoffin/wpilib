@@ -299,7 +299,6 @@ int processFile(char *inputFile, char *outputString, int lineNumber)
 	int stringSize = 80;		// max size of one line in file 
 	char inputStr[stringSize];
 	struct stat fileStatus;
-	int fileSize=0;
 	int lineCount=0;
 	  
 	if (lineNumber < 0)
@@ -312,7 +311,6 @@ int processFile(char *inputFile, char *outputString, int lineNumber)
     memset (&fileStatus, 0, sizeof(fileStatus));
     if (!stat(inputFile, &fileStatus)) {
       if (S_ISREG(fileStatus.st_mode)) {
-        fileSize = fileStatus.st_size;
       }
     }
 
