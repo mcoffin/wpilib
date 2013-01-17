@@ -21,6 +21,7 @@ private:
 
 public:
 	EnumCameraParameter(const char *setString, const char *getString, bool requiresRestart, const char *const*choices, int numChoices);
+	virtual ~EnumCameraParameter() {};
 	virtual bool CheckChanged(bool &changed, char *param);
 	virtual void GetParamFromString(const char *string, int stringLength);
 };
