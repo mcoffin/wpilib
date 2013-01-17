@@ -23,7 +23,7 @@
 #define kFullMessageIDMask (CAN_MSGID_API_M | CAN_MSGID_MFR_M | CAN_MSGID_DTYPE_M)
 
 const INT32 CANJaguar::kControllerRate;
-const double CANJaguar::kApproxBusVoltage;
+constexpr double CANJaguar::kApproxBusVoltage;
 
 /**
  * Common initialization code called by all constructors.
