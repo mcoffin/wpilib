@@ -8,8 +8,8 @@
 
 #include "NetworkCommunication/UsageReporting.h"
 
-const float Servo::kMaxServoAngle;
-const float Servo::kMinServoAngle;
+constexpr float Servo::kMaxServoAngle;
+constexpr float Servo::kMinServoAngle;
 
 /**
  * Common initialization code called by all constructors.

@@ -15,7 +15,8 @@
 
 //WindRiver is 3.4 GCC. Recent GCC can  do 0b01010101 style format, WR cannot
 // LU stands for unsigned long
-#define TO_HEX__(n) 0x##n##LU
+//#define TO_HEX__(n) 0x##n##LU
+#define TO_HEX__(n) 0xnLU
 #define BINARY_LITERAL_VIA_HEX__(n) (((n & 0x00000001LU) ? 1 : 0)\
 	+ ((n & 0x00000010LU) ? 2 : 0) \
 	+ ((n & 0x00000100LU) ? 4 : 0) \
@@ -25,7 +26,13 @@
 	+ ((n & 0x01000000LU) ? 64 : 0) \
 	+ ((n & 0x10000000LU) ? 128 : 0))
 	
-#define b(n) ((unsigned char)BINARY_LITERAL_VIA_HEX__(TO_HEX__(n)))
+// Had to comment this macro out for c++11 compatibility. Undef'd to see if it's used. Now if you try to use it
+// it will at least give you an error
+// TODO: actually get this macro working with c++11
+#undef b
+#undef TO_HEX__
+#undef BINARY_LITERAL_VIA_HEX__
+//#define b(n) ((unsigned char)BINARY_LITERAL_VIA_HEX__(TO_HEX__(n)))
 
 class DataIOStream{
 public:

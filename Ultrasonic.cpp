@@ -14,10 +14,10 @@
 #include "Utility.h"
 #include "WPIErrors.h"
 
-const double Ultrasonic::kPingTime;	///< Time (sec) for the ping trigger pulse.
+constexpr double Ultrasonic::kPingTime;	///< Time (sec) for the ping trigger pulse.
 const UINT32 Ultrasonic::kPriority;	///< Priority that the ultrasonic round robin task runs.
-const double Ultrasonic::kMaxUltrasonicTime;	///< Max time (ms) between readings.
-const double Ultrasonic::kSpeedOfSoundInchesPerSec;
+constexpr double Ultrasonic::kMaxUltrasonicTime;	///< Max time (ms) between readings.
+constexpr double Ultrasonic::kSpeedOfSoundInchesPerSec;
 Task Ultrasonic::m_task("UltrasonicChecker", (FUNCPTR)UltrasonicChecker); // task doing the round-robin automatic sensing
 Ultrasonic *Ultrasonic::m_firstSensor = NULL; // head of the ultrasonic sensor list
 bool Ultrasonic::m_automaticEnabled = false; // automatic round robin mode
