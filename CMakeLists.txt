@@ -24,6 +24,22 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/ DESTINATION ${HEADER_DIR}
 		PATTERN ".settings" EXCLUDE
 		PATTERN "${HEADER_DIR}" EXCLUDE #prevent infinite recurse case
 )
+
+# CPack Package Generation
+set(CPACK_PACKAGE_NAME wpilib)
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "WPILib for the FIRST Robotics Competition
+ WPILib, developed by Worcester Polytechnic Institute for FIRST, is a
+ library designed to simplify interfacing with hardware for the FIRST
+ Robotics Competition (FRC).  It is part of a cross development
+ environment to a powerpc-wrs-vxworks system."
+)
+set(CPACK_PACKAGE_VERSION ${VERSION})
+set(CPACK_PACKAGE_VENDOR "FRC")
+set(CPACK_PACKAGE_MAINTAINER "Matt Coffin")
+set(CPACK_PACKAGE_CONTACT "mcoffin@irys.com")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "/usr/powerpc-wrs-vxworks")
+include(CPack)
+
 install(FILES
    "${PROJECT_BINARY_DIR}/WPILibConfig.cmake"
    "${PROJECT_BINARY_DIR}/WPILibConfigVersion.cmake"
