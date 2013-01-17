@@ -49,7 +49,7 @@ int AxisCamera_debugFlag = 0;
 #define DPRINTF if(AxisCamera_debugFlag)dprintf
 
 /** @brief Camera data to be accessed globally */
-struct {
+typedef struct {
 	int readerPID; // Set to taskID for signaling
 	int index; /* -1,0,1 */
 	int	acquire; /* 0:STOP CAMERA; 1:START CAMERA */
@@ -67,7 +67,9 @@ struct {
 		int decodedImageSize;   // size of decoded image
 	}data[2];
 	int cameraMetrics[CAM_NUM_METRICS];
-}globalCamera;
+} GlobalCameraData;
+
+GlobalCameraData globalCamera;
 
 /* run flag */
 static short cont = 0;
@@ -848,11 +850,12 @@ Authorization: Basic %s;\n\n";
 		
 		/* signal a listening task */
 		if (globalCamera.readerPID) {
-			if (taskKill (globalCamera.readerPID,SIGUSR1) == OK)
+			if (taskKill (globalCamera.readerPID,SIGUSR1) == OK) {
 				DPRINTF (LOG_DEBUG, "SIGNALING PID= %i", globalCamera.readerPID);
-			else
+			} else {
 				globalCamera.cameraMetrics[CAM_PID_SIGNAL_ERR]++;
 				DPRINTF (LOG_DEBUG, "ERROR SIGNALING PID= %i", globalCamera.readerPID);
+			}
 		}
 
 		globalCamera.cameraMetrics[CAM_NUM_IMAGE]++;	

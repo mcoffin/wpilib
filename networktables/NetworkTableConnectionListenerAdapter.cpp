@@ -11,10 +11,6 @@
 NetworkTableConnectionListenerAdapter::NetworkTableConnectionListenerAdapter(IRemote* _targetSource, IRemoteConnectionListener* _targetListener):
 			targetSource(_targetSource), targetListener(_targetListener){}
 
-NetworkTableConnectionListenerAdapter::~NetworkTableConnectionListenerAdapter() {
-	// destructor
-}
-
 void NetworkTableConnectionListenerAdapter::Connected(IRemote* remote) {
 	targetListener->Connected(targetSource);
 }

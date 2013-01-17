@@ -234,6 +234,7 @@ Authorization: Basic RlJDOkZSQw==\n\n";
 			ReadImagesFromCamera();
 		}
 	}
+	return 0; // Just here to satisfy GCC's return-type warnings
 }
 
 /**
