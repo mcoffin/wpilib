@@ -16,7 +16,7 @@ set(WPI_LIBS "")
 add_library(${LIB_NAME} ${WPI_SOURCES})
 include_directories(${WPI_INCLUDES})
 target_link_libraries(wpilib ${WPI_LIBS})
-install(TARGETS ${LIB_NAME} LIBRARY DESTINATION ${LIB_DIR} ARCHIVE DESTINATION ${LIB_DIR} RUNTIME DESTINATION bin)
+install(TARGETS ${LIB_NAME} LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/ DESTINATION ${HEADER_DIR}
 	FILES_MATCHING
 		PATTERN *.h
@@ -33,6 +33,8 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "WPILib for the FIRST Robotics Competition
  Robotics Competition (FRC).  It is part of a cross development
  environment to a powerpc-wrs-vxworks system."
 )
+set(CPACK_SET_DESTDIR "ON")
+set(CPACK_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 set(CPACK_PACKAGE_VERSION ${VERSION})
 set(CPACK_PACKAGE_VENDOR "FRC")
 set(CPACK_PACKAGE_MAINTAINER "Matt Coffin")
