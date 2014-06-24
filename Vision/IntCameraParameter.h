@@ -26,7 +26,7 @@ protected:
 
 public:
 	IntCameraParameter(const char *setString, const char *getString, bool requiresRestart);
-	virtual ~IntCameraParameter() {};
+	virtual ~IntCameraParameter(){}
 	int GetValue();
 	void SetValue(int value);
 	virtual bool CheckChanged(bool &changed, char *param);

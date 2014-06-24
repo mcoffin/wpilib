@@ -7,34 +7,37 @@
 #include "Solenoid.h"
 #include "NetworkCommunication/UsageReporting.h"
 #include "WPIErrors.h"
+#include "LiveWindow/LiveWindow.h"
 
 /**
  * Common function to implement constructor behavior.
  */
 void Solenoid::InitSolenoid()
 {
+	m_table = NULL;
 	char buf[64];
 	if (!CheckSolenoidModule(m_moduleNumber))
 	{
-		snprintf(buf, 64, "Solenoid Module %d", m_moduleNumber);
+		snprintf(buf, 64, "Solenoid Module %lu", m_moduleNumber);
 		wpi_setWPIErrorWithContext(ModuleIndexOutOfRange, buf);
 		return;
 	}
 	if (!CheckSolenoidChannel(m_channel))
 	{
-		snprintf(buf, 64, "Solenoid Channel %d", m_channel);
+		snprintf(buf, 64, "Solenoid Channel %lu", m_channel);
 		wpi_setWPIErrorWithContext(ChannelIndexOutOfRange, buf);
 		return;
 	}
 	Resource::CreateResourceObject(&m_allocated, tSolenoid::kNumDO7_0Elements * kSolenoidChannels);
 
-	snprintf(buf, 64, "Solenoid %d (Module: %d)", m_channel, m_moduleNumber);
+	snprintf(buf, 64, "Solenoid %lu (Module: %lu)", m_channel, m_moduleNumber);
 	if (m_allocated->Allocate((m_moduleNumber - 1) * kSolenoidChannels + m_channel - 1, buf) == ~0ul)
 	{
 		CloneError(m_allocated);
 		return;
 	}
 
+	LiveWindow::GetInstance()->AddActuator("Solenoid", m_moduleNumber, m_channel, this);
 	nUsageReporting::report(nUsageReporting::kResourceType_Solenoid, m_channel, m_moduleNumber - 1);
 }
 
@@ -43,7 +46,7 @@ void Solenoid::InitSolenoid()
  * 
  * @param channel The channel on the solenoid module to control (1..8).
  */
-Solenoid::Solenoid(UINT32 channel)
+Solenoid::Solenoid(uint32_t channel)
 	: SolenoidBase (GetDefaultSolenoidModule())
 	, m_channel (channel)
 {
@@ -56,7 +59,7 @@ Solenoid::Solenoid(UINT32 channel)
  * @param moduleNumber The solenoid module (1 or 2).
  * @param channel The channel on the solenoid module to control (1..8).
  */
-Solenoid::Solenoid(UINT8 moduleNumber, UINT32 channel)
+Solenoid::Solenoid(uint8_t moduleNumber, uint32_t channel)
 	: SolenoidBase (moduleNumber)
 	, m_channel (channel)
 {
@@ -82,8 +85,8 @@ Solenoid::~Solenoid()
 void Solenoid::Set(bool on)
 {
 	if (StatusIsFatal()) return;
-	UINT8 value = on ? 0xFF : 0x00;
-	UINT8 mask = 1 << (m_channel - 1);
+	uint8_t value = on ? 0xFF : 0x00;
+	uint8_t mask = 1 << (m_channel - 1);
 
 	SolenoidBase::Set(value, mask);
 }
@@ -96,7 +99,7 @@ void Solenoid::Set(bool on)
 bool Solenoid::Get()
 {
 	if (StatusIsFatal()) return false;
-	UINT8 value = GetAll() & ( 1 << (m_channel - 1));
+	uint8_t value = GetAll() & ( 1 << (m_channel - 1));
 	return (value != 0);
 }
 
@@ -113,12 +116,16 @@ void Solenoid::UpdateTable() {
 
 void Solenoid::StartLiveWindowMode() {
 	Set(false);
-	m_table->AddTableListener("Value", this, true);
+	if (m_table != NULL) {
+		m_table->AddTableListener("Value", this, true);
+	}
 }
 
 void Solenoid::StopLiveWindowMode() {
 	Set(false);
-	m_table->RemoveTableListener(this);
+	if (m_table != NULL) {
+		m_table->RemoveTableListener(this);
+	}
 }
 
 std::string Solenoid::GetSmartDashboardType() {

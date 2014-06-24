@@ -63,7 +63,7 @@ void PIDController::Initialize(float Kp, float Ki, float Kd, float Kf,
 {
 	m_table = NULL;
 	
-	m_semaphore = semBCreate(SEM_Q_PRIORITY, SEM_FULL);
+	m_semaphore = semMCreate(SEM_Q_PRIORITY);
 
 	m_controlLoop = new Notifier(PIDController::CallCalculate, this);
 
@@ -94,7 +94,7 @@ void PIDController::Initialize(float Kp, float Ki, float Kd, float Kf,
 
 	m_controlLoop->StartPeriodic(m_period);
 
-	static INT32 instances = 0;
+	static int32_t instances = 0;
 	instances++;
 	nUsageReporting::report(nUsageReporting::kResourceType_PIDController, instances);
 	
@@ -419,7 +419,7 @@ float PIDController::GetError()
 	float error;
 	CRITICAL_REGION(m_semaphore)
 	{
-		error = GetSetpoint() - m_pidInput->PIDGet();
+		error = m_setpoint - m_pidInput->PIDGet();
 	}
 	END_REGION;
 	return error;
@@ -479,8 +479,8 @@ void PIDController::SetAbsoluteTolerance(float absTolerance)
  */
 bool PIDController::OnTarget()
 {
-	bool temp;
-	CRITICAL_REGION(m_semaphore)
+    bool temp = false;
+    CRITICAL_REGION(m_semaphore)
 	{
 		switch (m_toleranceType) {
 		case kPercentTolerance:
@@ -491,6 +491,9 @@ bool PIDController::OnTarget()
 			break;
 		//TODO: this case needs an error
 		case kNoTolerance:
+			temp = false;
+			break;
+		default:
 			temp = false;
 		}
 	}

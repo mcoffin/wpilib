@@ -11,9 +11,10 @@
 #include "WPIErrors.h"
 
 #include <stdio.h>
+#include <algorithm>
 
 /** Private NI function needed to write to the VxWorks target */
-extern "C" int Priv_SetWriteFileAllowed(UINT32 enable); 
+extern "C" int Priv_SetWriteFileAllowed(uint32_t enable); 
 
 /** The Preferences table name */
 static const char *kTableName = "Preferences";
@@ -40,11 +41,8 @@ Preferences::Preferences() :
 	m_tableLock = semMCreate(SEM_Q_PRIORITY | SEM_INVERSION_SAFE | SEM_DELETE_SAFE);
 
 	Synchronized sync(m_fileLock);
-	m_readTask.Start((UINT32)this);
+	m_readTask.Start((uint32_t)this);
 	semTake(m_fileOpStarted, WAIT_FOREVER);
-
-	NetworkTable::GetTable(kTableName)->PutBoolean(kSaveField, false);
-	NetworkTable::GetTable(kTableName)->AddTableListener(this);
 
 	nUsageReporting::report(nUsageReporting::kResourceType_Preferences, 0);
 }
@@ -326,7 +324,7 @@ void Preferences::PutLong(const char *key, INT64 value)
 void Preferences::Save()
 {
 	Synchronized sync(m_fileLock);
-	m_writeTask.Start((UINT32)this);
+	m_writeTask.Start((uint32_t)this);
 	semTake(m_fileOpStarted, WAIT_FOREVER);
 }
 
@@ -429,7 +427,7 @@ void Preferences::ReadTaskRun()
 			{
 				value = fgetc(file);
 			} while (value == ' ' || value == '\t');
-
+			
 			if (value == '\n' || value == ';')
 			{
 				if (value == '\n')
@@ -500,7 +498,7 @@ void Preferences::ReadTaskRun()
 				{
 					m_keys.push_back(name);
 					m_values.insert(std::pair<std::string, std::string>(name, value));
-					//NetworkTable::GetTable(kTableName)->PutString(name, value);
+					NetworkTable::GetTable(kTableName)->PutString(name, value);
 
 					if (!comment.empty())
 					{
@@ -524,6 +522,9 @@ void Preferences::ReadTaskRun()
 
 	if (!comment.empty())
 		m_endComment = comment;
+	
+	NetworkTable::GetTable(kTableName)->PutBoolean(kSaveField, false);
+	NetworkTable::GetTable(kTableName)->AddTableListener(this);
 }
 
 /**
@@ -592,16 +593,18 @@ void Preferences::ValueChanged(ITable* table, const std::string& key, EntryValue
 
 		if (!isKeyAcceptable(key) || table->GetString(key, "").find('"')!=std::string::npos)
 		{
-			table->PutString(key, "\"");
-			m_values.erase(key);
-			std::vector<std::string>::iterator it = m_keys.begin();
-			for (; it != m_keys.end(); it++)
-			{
-				if (key==*it)
+			if(m_values.find(key) != m_values.end()){
+				m_values.erase(key);
+				std::vector<std::string>::iterator it = m_keys.begin();
+				for (; it != m_keys.end(); it++)
 				{
-					m_keys.erase(it);
-					break;
+					if (key==*it)
+					{
+						m_keys.erase(it);
+						break;
+					}
 				}
+				table->PutString(key, "\"");
 			}
 		}
 		else

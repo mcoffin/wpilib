@@ -1,5 +1,43 @@
+wpilib (2014.0) unstable; urgency=low
+
+  * Update for 2014 season
+
+ -- R Blair Mason (rbmj) <rbmj@verizon.net>  Tue, 07 Jan 2014 11:57:05 -0500
+
+wpilib (2013.4-3) unstable; urgency=low
+
+  * Cosmetic changes to dependencies
+  * 
+
+ -- R Blair Mason (rbmj) <rbmj@verizon.net>  Thu, 17 Oct 2013 16:43:29 -0400
+
+wpilib (2013.4-2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * 
+
+ -- Robert Blair Mason Jr. (rbmj) <rbmj@verizon.net>  Tue, 26 Mar 2013 10:05:08 -0400
+
+wpilib (2013.3-1) unstable; urgency=low
+
+  * Second Mid-season update.
+  * 
+
+ -- Robert Blair Mason Jr. (rbmj) <rbmj@verizon.net>  Fri, 01 Mar 2013 11:26:23 -0500
+
+wpilib (2013.2-1) unstable; urgency=low
+
+  * First Mid-season update.
+  * 
+
+ -- Robert Blair Mason Jr. (rbmj) <rbmj@verizon.net>  Fri, 01 Mar 2013 11:05:14 -0500
+
 wpilib (2013.1-1) unstable; urgency=low
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+  * Non-maintainer upload.
+  * 
 
  -- Robert Blair Mason Jr. (rbmj) <rbmj@verizon.net>  Wed, 09 Jan 2013 22:38:39 -0500
+=======
+ -- Patrick Plenefisch <phplenefisch@wpi.edu>  Fri, 22 Mar 2013 11:55:49 -0400
+>>>>>>> upstream
