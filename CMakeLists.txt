@@ -64,4 +64,9 @@ set(CPACK_PACKAGE_VENDOR "FRC")
 set(CPACK_PACKAGE_MAINTAINER "Matt Coffin")
 set(CPACK_PACKAGE_CONTACT "mcoffin@irys.com")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "/usr/powerpc-wrs-vxworks")
+
+# Debian specific CPack settings
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "wrs-headers")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+
 include(CPack)
