@@ -22,7 +22,7 @@ private:
 
 public:
 	NetworkTableConnectionListenerAdapter(IRemote* targetSource, IRemoteConnectionListener* targetListener);
-	virtual ~NetworkTableConnectionListenerAdapter() {};
+	virtual ~NetworkTableConnectionListenerAdapter();
 	void Connected(IRemote* remote);
 	void Disconnected(IRemote* remote);
 };

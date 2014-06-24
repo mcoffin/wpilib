@@ -10,6 +10,7 @@
 #include "NetworkCommunication/UsageReporting.h"
 #include "Resource.h"
 #include "WPIErrors.h"
+#include "LiveWindow/LiveWindow.h"
 
 // Allocate each direction separately.
 static Resource *relayChannels = NULL;
@@ -22,8 +23,9 @@ static Resource *relayChannels = NULL;
  * 
  * @param moduleNumber The digital module this relay is connected to (1 or 2).
  */
-void Relay::InitRelay (UINT8 moduleNumber)
+void Relay::InitRelay (uint8_t moduleNumber)
 {
+	m_table = NULL;
 	char buf[64];
 	Resource::CreateResourceObject(&relayChannels, tDIO::kNumSystems * kRelayChannels * 2);
 	if (!SensorBase::CheckRelayModule(moduleNumber))
@@ -34,14 +36,14 @@ void Relay::InitRelay (UINT8 moduleNumber)
 	}
 	if (!SensorBase::CheckRelayChannel(m_channel))
 	{
-		snprintf(buf, 64, "Relay Channel %d", m_channel);
+		snprintf(buf, 64, "Relay Channel %lu", m_channel);
 		wpi_setWPIErrorWithContext(ChannelIndexOutOfRange, buf);
 		return;
 	}
 
 	if (m_direction == kBothDirections || m_direction == kForwardOnly)
 	{
-		snprintf(buf, 64, "Forward Relay %d (Module: %d)", m_channel, moduleNumber);
+		snprintf(buf, 64, "Forward Relay %lu (Module: %d)", m_channel, moduleNumber);
 		if (relayChannels->Allocate(((moduleNumber - 1) * kRelayChannels + m_channel - 1) * 2, buf) == ~0ul)
 		{
 			CloneError(relayChannels);
@@ -52,7 +54,7 @@ void Relay::InitRelay (UINT8 moduleNumber)
 	}
 	if (m_direction == kBothDirections || m_direction == kReverseOnly)
 	{
-		snprintf(buf, 64, "Reverse Relay %d (Module: %d)", m_channel, moduleNumber);
+		snprintf(buf, 64, "Reverse Relay %lu (Module: %d)", m_channel, moduleNumber);
 		if (relayChannels->Allocate(((moduleNumber - 1) * kRelayChannels + m_channel - 1) * 2 + 1, buf) == ~0ul)
 		{
 			CloneError(relayChannels);
@@ -64,6 +66,7 @@ void Relay::InitRelay (UINT8 moduleNumber)
 	m_module = DigitalModule::GetInstance(moduleNumber);
 	m_module->SetRelayForward(m_channel, false);
 	m_module->SetRelayReverse(m_channel, false);
+	LiveWindow::GetInstance()->AddActuator("Relay", moduleNumber, m_channel, this);
 }
 
 /**
@@ -73,7 +76,7 @@ void Relay::InitRelay (UINT8 moduleNumber)
  * @param channel The channel number within the module for this relay.
  * @param direction The direction that the Relay object will control.
  */
-Relay::Relay(UINT8 moduleNumber, UINT32 channel, Relay::Direction direction)
+Relay::Relay(uint8_t moduleNumber, uint32_t channel, Relay::Direction direction)
 	: m_channel (channel)
 	, m_direction (direction)
 {
@@ -85,7 +88,7 @@ Relay::Relay(UINT8 moduleNumber, UINT32 channel, Relay::Direction direction)
  * @param channel The channel number within the default module for this relay.
  * @param direction The direction that the Relay object will control.
  */
-Relay::Relay(UINT32 channel, Relay::Direction direction)
+Relay::Relay(uint32_t channel, Relay::Direction direction)
 	: m_channel (channel)
 	, m_direction (direction)
 {
@@ -242,11 +245,15 @@ void Relay::UpdateTable() {
 }
 
 void Relay::StartLiveWindowMode() {
-	m_table->AddTableListener("Value", this, true);
+	if(m_table != NULL){
+		m_table->AddTableListener("Value", this, true);
+	}
 }
 
 void Relay::StopLiveWindowMode() {
-	m_table->RemoveTableListener(this);
+	if(m_table != NULL){
+		m_table->RemoveTableListener(this);
+	}
 }
 
 std::string Relay::GetSmartDashboardType() {
